@@ -1,86 +1,86 @@
 # wasm-skills
 
-A collection of Claude Code skills for WebAssembly integration in web applications.
+Webアプリケーションへの WebAssembly 統合を支援する Claude Code スキル集です。
 
-Currently focused on MuJoCo WASM with Next.js and React Three Fiber. Additional WASM library skills will be added over time.
+現在は MuJoCo WASM と Next.js / React Three Fiber を中心に構成されています。今後、他の WASM ライブラリ向けスキルも順次追加予定です。
 
-## Skills
+## スキル一覧
 
 ### MuJoCo WASM
 
-Skills for integrating the MuJoCo physics simulation engine via its WASM build.
+MuJoCo 物理シミュレーションエンジンの WASM ビルドを統合するためのスキルです。
 
-**mujoco-wasm-setup.md** - Environment Setup
+**mujoco-wasm-setup.md** - 環境構築
 
-- WASM file placement under `public/mujoco/` for static serving
-- `next.config.ts` webpack fallback configuration for Node.js built-ins
-- Required dependencies and recommended `tsconfig.json` settings
-- Troubleshooting guide for common setup errors
+- 静的配信のための `public/mujoco/` 以下への WASM ファイル配置
+- Node.js 組み込みモジュール向け `next.config.ts` webpack fallback 設定
+- 必要な依存パッケージと推奨 `tsconfig.json` 設定
+- よくあるセットアップエラーのトラブルシューティングガイド
 
-**mujoco-wasm-init.md** - WASM Initialization
+**mujoco-wasm-init.md** - WASM 初期化
 
-- Dynamic import with `webpackIgnore` comment to bypass bundler processing
-- Emscripten `locateFile` callback and cache busting strategies
-- React state management with `useState` and `useEffect` for async initialization
-- `isMounted` flag pattern to prevent memory leaks on component unmount
-- Overview of key Emscripten module APIs: `FS`, `Model`, `State`, `Simulation`
+- バンドラー処理をバイパスする `webpackIgnore` コメント付き dynamic import
+- Emscripten `locateFile` コールバックとキャッシュバスティング戦略
+- 非同期初期化のための `useState` / `useEffect` を使った React 状態管理
+- コンポーネントアンマウント時のメモリリーク防止のための `isMounted` フラグパターン
+- 主要 Emscripten モジュール API の概要: `FS`、`Model`、`State`、`Simulation`
 
-**mujoco-model-loading.md** - Model Loading and Memory Management
+**mujoco-model-loading.md** - モデルの読み込みとメモリ管理
 
-- Writing model data into the Emscripten virtual filesystem via `FS.writeFile`
-- Object creation flow: `Model` -> `State` -> `Simulation`
-- Key properties reference: `ngeom`, `geom_type`, `geom_size`, `geom_pos`, `geom_mat`, and others
-- Explicit WASM memory release using `.free()` and `.delete()`
-- Deferred release pattern to avoid race conditions with the rendering loop
+- `FS.writeFile` による Emscripten 仮想ファイルシステムへのモデルデータ書き込み
+- オブジェクト生成フロー: `Model` -> `State` -> `Simulation`
+- 主要プロパティのリファレンス: `ngeom`、`geom_type`、`geom_size`、`geom_pos`、`geom_mat` など
+- `.free()` と `.delete()` による明示的な WASM メモリ解放
+- レンダリングループとの競合状態を避けるための遅延解放パターン
 
-**mujoco-mjcf-reference.md** - MJCF XML Reference
+**mujoco-mjcf-reference.md** - MJCF XML リファレンス
 
-- Basic XML structure: `mujoco` > `option`, `asset`, `worldbody`
-- `option` element attributes: `timestep`, `gravity`, `integrator`, `iterations`
-- Geometry type reference with size semantics: `plane`, `box`, `sphere`, `cylinder`, `capsule`, `ellipsoid`
-- Body and joint structures: `freejoint`, `hinge`, `slide`, `ball`
-- Dynamic XML generation from JavaScript
+- 基本 XML 構造: `mujoco` > `option`、`asset`、`worldbody`
+- `option` 要素の属性: `timestep`、`gravity`、`integrator`、`iterations`
+- サイズの意味付きジオメトリ型リファレンス: `plane`、`box`、`sphere`、`cylinder`、`capsule`、`ellipsoid`
+- ボディとジョイント構造: `freejoint`、`hinge`、`slide`、`ball`
+- JavaScript による動的 XML 生成
 
-**mujoco-simulation-loop.md** - Simulation Loop and Frame Sync
+**mujoco-simulation-loop.md** - シミュレーションループとフレーム同期
 
-- Adaptive stepping: calculating step count from frame delta time
-- `maxSteps` cap to prevent freezing on background tabs or slow frames
-- Pause control pattern integrated into the animation loop
-- Runtime parameter changes: gravity updates, dynamic object count modification
-- Timestep selection guide ranging from `0.001s` (high precision) to `0.02s` (performance)
+- フレームのデルタタイムからステップ数を計算するアダプティブステッピング
+- バックグラウンドタブや低速フレームでのフリーズを防ぐ `maxSteps` 上限
+- アニメーションループに統合したポーズ制御パターン
+- 実行時パラメータ変更: 重力の更新、動的なオブジェクト数の変更
+- `0.001s`（高精度）から `0.02s`（パフォーマンス重視）までのタイムステップ選択ガイド
 
-**mujoco-threejs-integration.md** - Three.js / R3F Integration
+**mujoco-threejs-integration.md** - Three.js / R3F 統合
 
-- MuJoCo geometry to Three.js geometry mapping (`geom_type` index -> BufferGeometry)
-- Matrix conversion from MuJoCo row-major 3x3 rotation to Three.js column-major 4x4 Matrix4
-- Coordinate system differences: MuJoCo Z-up vs Three.js Y-up
-- Performance optimizations: geometry singletons, disabling `matrixAutoUpdate`, pre-computing scale vectors
+- MuJoCo ジオメトリから Three.js ジオメトリへのマッピング（`geom_type` インデックス -> BufferGeometry）
+- MuJoCo 行優先 3x3 回転行列から Three.js 列優先 4x4 Matrix4 への変換
+- 座標系の違い: MuJoCo は Z-up、Three.js は Y-up
+- パフォーマンス最適化: ジオメトリのシングルトン化、`matrixAutoUpdate` の無効化、スケールベクトルの事前計算
 
-### General WASM Patterns
+### 汎用 WASM パターン
 
-**wasm-nextjs-patterns.md** - WASM + Next.js Integration
+**wasm-nextjs-patterns.md** - WASM + Next.js 統合
 
-- SSR avoidance strategies: `"use client"` directive, `next/dynamic` with `ssr: false`, `useEffect`-based lazy loading
-- React state machine pattern for WASM lifecycle (`loading` / `error` / `ready`)
-- WASM memory management principles and ownership rules
-- Performance optimizations: TypedArray direct references, Web Worker offloading, SharedArrayBuffer
-- Deployment considerations: `Content-Type` headers, Brotli/gzip compression, CORS configuration
+- SSR 回避戦略: `"use client"` ディレクティブ、`ssr: false` を指定した `next/dynamic`、`useEffect` ベースの遅延読み込み
+- WASM ライフサイクル向け React ステートマシンパターン（`loading` / `error` / `ready`）
+- WASM メモリ管理の原則と所有権ルール
+- パフォーマンス最適化: TypedArray の直接参照、Web Worker へのオフロード、SharedArrayBuffer
+- デプロイ時の考慮点: `Content-Type` ヘッダー、Brotli/gzip 圧縮、CORS 設定
 
-## Usage
+## 使い方
 
 ```bash
 cp .claude/skills/*.md /your-project/.claude/skills/
 ```
 
-Claude Code automatically discovers and applies skills from `.claude/skills/` when they are relevant to your task.
+`.claude/skills/` に配置されたスキルは、タスクに関連する場合に Claude Code が自動的に検出・適用します。
 
-## Tech Stack (Current)
+## 技術スタック（現在）
 
 - WebAssembly / Emscripten
 - Next.js (App Router)
 - React Three Fiber / Three.js
 - TypeScript
 
-## License
+## ライセンス
 
 MIT
