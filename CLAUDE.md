@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Claude Code向けスキルドキュメント集リポジトリ。アプリケーションコードは含まない。
 
-MuJoCo WASM + Next.js (App Router) + React Three Fiber / Three.js の統合パターンを `.claude/skills/` 配下のMarkdownファイルとして管理。対象プロジェクトに `cp .claude/skills/*.md /your-project/.claude/skills/` でコピーして使用する。
+MuJoCo WASM + Next.js (App Router) + React Three Fiber / Three.js の統合パターン、および MediaPipe Vision WASM + Next.js のカメラ入力・人体トラッキングパターンを `.claude/skills/` 配下のMarkdownファイルとして管理。対象プロジェクトに `cp .claude/skills/*.md /your-project/.claude/skills/` でコピーして使用する。
 
 ## Repository Structure
 
@@ -20,7 +20,13 @@ prototypings/             # 各WASMライブラリの動作検証用プロトタ
 ├── mujoco-mjcf-reference.md      # MJCF XMLフォーマット・ジオメトリ型定義
 ├── mujoco-simulation-loop.md     # アダプティブステッピング・フレーム同期
 ├── mujoco-threejs-integration.md # 座標系変換・行列変換・パフォーマンス最適化
-└── wasm-nextjs-patterns.md       # 汎用WASM + Next.js統合パターン（SSR回避等）
+├── wasm-nextjs-patterns.md       # 汎用WASM + Next.js統合パターン（SSR回避等）
+├── mediapipe-wasm-setup.md       # MediaPipe環境構築（@mediapipe/tasks-vision、WASM配置）
+├── mediapipe-wasm-init.md        # FilesetResolver・タスク生成・SSR回避・GPU delegate
+├── mediapipe-camera-input.md     # カメラ入力・検出ループ・Canvas描画・DrawingUtils
+├── mediapipe-hand-tracking.md    # HandLandmarker（手21関節・左右判定・ジェスチャー）
+├── mediapipe-pose-estimation.md  # PoseLandmarker（全身33関節・visibility・ワールド座標）
+└── mediapipe-face-mesh.md        # FaceLandmarker（顔468点・ブレンドシェイプ・表情認識）
 ```
 
 ## Skill Dependency Order
@@ -28,9 +34,15 @@ prototypings/             # 各WASMライブラリの動作検証用プロトタ
 スキルは以下の順序で段階的に適用される設計：
 
 ```
+[MuJoCo系]
 setup → init → model-loading → mjcf-reference → simulation-loop → threejs-integration
                                                                          ↑
 wasm-nextjs-patterns（横断的な汎用パターン）─────────────────────────────────┘
+
+[MediaPipe系]
+mediapipe-wasm-setup → mediapipe-wasm-init → mediapipe-camera-input
+                                                  ↓
+                              mediapipe-hand-tracking / mediapipe-pose-estimation / mediapipe-face-mesh
 ```
 
 ## Key Technical Decisions
@@ -40,6 +52,10 @@ wasm-nextjs-patterns（横断的な汎用パターン）────────
 - `"use client"` を徹底し SSR での WASM ロードを完全に回避
 - WASMヒープオブジェクトは JS GC対象外のため `free()`/`delete()` の明示的呼び出しが必須
 - MuJoCo (Z-up) と Three.js (Y-up) の座標系差異は `camera={{ up: [0, 0, 1] }}` で対応
+- MediaPipe Vision は `@mediapipe/tasks-vision` 統合パッケージを使用（旧個別パッケージはレガシー）
+- MediaPipe WASMは `public/mediapipe/wasm/` にpostinstallスクリプトでコピー配置
+- MediaPipe タスクの `close()` メソッドでWASMリソースを明示的に解放
+- Next.js 16ではTurbopackデフォルト有効、webpack設定がある場合 `turbopack: {}` キーが必須
 
 ## Prototyping Convention
 
