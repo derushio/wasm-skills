@@ -1,0 +1,30 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "wasm-skills",
+  "description": "WebAssembly integration skills for Next.js — MuJoCo physics simulation and MediaPipe Vision tasks",
+  "owner": {
+    "name": "derushio"
+  },
+  "plugins": [
+    {
+      "name": "wasm-skills",
+      "description": "WASM + Next.js integration patterns for MuJoCo and MediaPipe Vision",
+      "source": "./",
+      "skills": [
+        "./skills/mujoco-wasm-setup",
+        "./skills/mujoco-wasm-init",
+        "./skills/mujoco-model-loading",
+        "./skills/mujoco-mjcf-reference",
+        "./skills/mujoco-simulation-loop",
+        "./skills/mujoco-threejs-integration",
+        "./skills/wasm-nextjs-patterns",
+        "./skills/mediapipe-wasm-setup",
+        "./skills/mediapipe-wasm-init",
+        "./skills/mediapipe-camera-input",
+        "./skills/mediapipe-hand-tracking",
+        "./skills/mediapipe-pose-estimation",
+        "./skills/mediapipe-face-mesh"
+      ]
+    }
+  ]
+}
