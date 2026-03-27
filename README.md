@@ -151,21 +151,6 @@ npx skills add derushio/wasm-skills@wasm-nextjs-patterns
 
 Claude Code, Cursor, Codex, Windsurf, GitHub Copilot など40以上のAIコーディングエージェントに対応しています。
 
-## 使い方（手動コピー）
-
-手動でスキルをコピーすることもできます。
-
-```bash
-# 全スキルをコピー
-cp -r skills/*/SKILL.md /your-project/.claude/skills/
-
-# または個別にコピー
-mkdir -p /your-project/.claude/skills/
-cp skills/mediapipe-wasm-setup/SKILL.md /your-project/.claude/skills/mediapipe-wasm-setup.md
-```
-
-`.claude/skills/` に配置されたスキルは、タスクに関連する場合に Claude Code が自動的に検出・適用します。
-
 ## プロトタイプ
 
 `prototypings/` 配下に各ライブラリの動作検証用プロトタイプがあります。
