@@ -6,27 +6,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Claude Code向けスキルドキュメント集リポジトリ。アプリケーションコードは含まない。
 
-MuJoCo WASM + Next.js (App Router) + React Three Fiber / Three.js の統合パターン、および MediaPipe Vision WASM + Next.js のカメラ入力・人体トラッキングパターンを `.claude/skills/` 配下のMarkdownファイルとして管理。対象プロジェクトに `cp .claude/skills/*.md /your-project/.claude/skills/` でコピーして使用する。
+MuJoCo WASM + Next.js (App Router) + React Three Fiber / Three.js の統合パターン、および MediaPipe Vision WASM + Next.js のカメラ入力・人体トラッキングパターンを `skills/` 配下のSKILL.mdファイルとして管理。`npx skills add derushio/wasm-skills` で他のプロジェクトにインストール可能。
 
 ## Repository Structure
 
 ```
 prototypings/             # 各WASMライブラリの動作検証用プロトタイプ
   <library-name>/         # ライブラリごとにディレクトリを分離（例: mujoco/）
-.claude/skills/           # Claude Codeが自動検出するスキル定義ファイル群
-├── mujoco-wasm-setup.md          # 環境構築（WASMファイル配置、webpack fallback）
-├── mujoco-wasm-init.md           # WASM動的import・初期化パターン
-├── mujoco-model-loading.md       # Model→State→Simulation生成・メモリ管理
-├── mujoco-mjcf-reference.md      # MJCF XMLフォーマット・ジオメトリ型定義
-├── mujoco-simulation-loop.md     # アダプティブステッピング・フレーム同期
-├── mujoco-threejs-integration.md # 座標系変換・行列変換・パフォーマンス最適化
-├── wasm-nextjs-patterns.md       # 汎用WASM + Next.js統合パターン（SSR回避等）
-├── mediapipe-wasm-setup.md       # MediaPipe環境構築（@mediapipe/tasks-vision、WASM配置）
-├── mediapipe-wasm-init.md        # FilesetResolver・タスク生成・SSR回避・GPU delegate
-├── mediapipe-camera-input.md     # カメラ入力・検出ループ・Canvas描画・DrawingUtils
-├── mediapipe-hand-tracking.md    # HandLandmarker（手21関節・左右判定・ジェスチャー）
-├── mediapipe-pose-estimation.md  # PoseLandmarker（全身33関節・visibility・ワールド座標）
-└── mediapipe-face-mesh.md        # FaceLandmarker（顔468点・ブレンドシェイプ・表情認識）
+skills/                   # npx skills add でインストール可能なスキル群（SKILL.md形式）
+├── mujoco-wasm-setup/            # 環境構築（WASMファイル配置、webpack fallback）
+├── mujoco-wasm-init/             # WASM動的import・初期化パターン
+├── mujoco-model-loading/         # Model→State→Simulation生成・メモリ管理
+├── mujoco-mjcf-reference/        # MJCF XMLフォーマット・ジオメトリ型定義
+├── mujoco-simulation-loop/       # アダプティブステッピング・フレーム同期
+├── mujoco-threejs-integration/   # 座標系変換・行列変換・パフォーマンス最適化
+├── wasm-nextjs-patterns/         # 汎用WASM + Next.js統合パターン（SSR回避等）
+├── mediapipe-wasm-setup/         # MediaPipe環境構築（@mediapipe/tasks-vision、WASM配置）
+├── mediapipe-wasm-init/          # FilesetResolver・タスク生成・SSR回避・GPU delegate
+├── mediapipe-camera-input/       # カメラ入力・検出ループ・Canvas描画・DrawingUtils
+├── mediapipe-hand-tracking/      # HandLandmarker（手21関節・左右判定・ジェスチャー）
+├── mediapipe-pose-estimation/    # PoseLandmarker（全身33関節・visibility・ワールド座標）
+└── mediapipe-face-mesh/          # FaceLandmarker（顔468点・ブレンドシェイプ・表情認識）
+.claude/skills/           # skills/ へのシンボリックリンク（このリポジトリ自身での利用用）
 ```
 
 ## Skill Dependency Order
@@ -67,6 +68,7 @@ mediapipe-wasm-setup → mediapipe-wasm-init → mediapipe-camera-input
 
 ## Editing Guidelines
 
-- スキルファイルの frontmatter `description` フィールドは Claude Code のマッチングに使用されるため、正確なキーワードを含めること
+- スキルファイルの frontmatter `name` および `description` フィールドは Claude Code のマッチングに使用されるため、正確なキーワードを含めること
 - 各スキルファイルは独立して参照可能なよう、必要な情報を自己完結的に記述すること
 - コード例は Next.js App Router + React Three Fiber 環境を前提とすること
+- スキルファイルは `skills/<name>/SKILL.md` 形式で配置し、`.claude/skills/` にはシンボリックリンクを配置すること
